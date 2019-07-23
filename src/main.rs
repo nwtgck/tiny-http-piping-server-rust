@@ -1,6 +1,9 @@
 use tiny_http::{Server, Request, Response, Method, StatusCode};
 use std::collections::HashMap;
-
+use futures::future;
+use futures::prelude::*;
+use futures::executor::*;
+use futures::future::IntoFuture;
 
 fn transfer(mut sender_req: Request, receiver_req: Request) {
     let length = sender_req.body_length();
@@ -20,48 +23,57 @@ fn main() {
     let mut path_to_sender  : HashMap<String, Request> = HashMap::new();
     let mut path_to_receiver: HashMap<String, Request> = HashMap::new();
 
-    for request in server.incoming_requests() {
-        println!("received request! method: {:?}, url: {:?}, headers: {:?}",
-            request.method(),
-            request.url(),
-            request.headers()
-        );
+    tokio::run(future::lazy(move || {
+        for request in server.incoming_requests() {
+            println!("received request! method: {:?}, url: {:?}, headers: {:?}",
+                     request.method(),
+                     request.url(),
+                     request.headers()
+            );
 
-        // Get path
-        // TODO: Remove query parameters
-        let path = request.url();
+            // Get path
+            // TODO: Remove query parameters
+            let path = request.url();
 
-        // TODO: Use thread or something to handle multiple request
-        match request.method() {
-            &Method::Get => {
-                match path_to_sender.remove(path) {
-                    // If sender is found
-                    Some(sender_req) => {
-                        transfer(sender_req, request);
-                    },
-                    // If sender is not found
-                    None => {
-                        // Enroll the receiver request
-                        path_to_receiver.insert(path.to_string(), request);
-                    }
-                };
-            },
-            &Method::Post | &Method::Put => {
-                match path_to_receiver.remove(path) {
-                    // If receiver is found
-                    Some(receiver_req) => {
-                        transfer(request, receiver_req);
-                    },
-                    // If sender is not found
-                    None => {
-                        // Enroll the sender request
-                        path_to_sender.insert(path.to_string(), request);
-                    }
-                };
-            },
-            _ => {
-                println!("Unsupported method: {}", request.method());
-            }
+            match request.method() {
+                &Method::Get => {
+                    match path_to_sender.remove(path) {
+                        // If sender is found
+                        Some(sender_req) => {
+                            tokio::spawn(future::lazy(move || {
+                                transfer(sender_req, request);
+                                Ok(())
+                            }));
+                        },
+                        // If sender is not found
+                        None => {
+                            // Enroll the receiver request
+                            path_to_receiver.insert(path.to_string(), request);
+                        }
+                    };
+
+                },
+                &Method::Post | &Method::Put => {
+                    match path_to_receiver.remove(path) {
+                        // If receiver is found
+                        Some(receiver_req) => {
+                            tokio::spawn(future::lazy(move || {
+                                transfer(request, receiver_req);
+                                Ok(())
+                            }));
+                        },
+                        // If sender is not found
+                        None => {
+                            // Enroll the sender request
+                            path_to_sender.insert(path.to_string(), request);
+                        }
+                    };
+                },
+                _ => {
+                    println!("Unsupported method: {}", request.method());
+                }
+            };
         };
-    }
+        Ok(())
+    }));
 }
