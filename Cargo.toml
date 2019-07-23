@@ -1,0 +1,8 @@
+[package]
+name = "tiny-http-piping-server-rust"
+version = "0.1.0-SNAPSHOT"
+authors = ["Ryo Ota <nwtgck@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+tiny_http = "0.6"
