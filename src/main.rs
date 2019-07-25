@@ -29,9 +29,12 @@ fn main() {
                      request.headers()
             );
 
+            // Create dummy root
+            let dummy_root = url::Url::parse("file://").unwrap();
+            // Parse request URL
+            let uri = dummy_root.join(request.url()).unwrap();
             // Get path
-            // TODO: Remove query parameters
-            let path = request.url();
+            let path = uri.path();
 
             match request.method() {
                 &Method::Get => {
