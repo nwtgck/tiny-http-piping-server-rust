@@ -37,6 +37,14 @@ fn main() {
 
             match request.method() {
                 &Method::Get => {
+                    // If a receiver has been registered already
+                    if path_to_receiver.contains_key(path) {
+                        let res =
+                            Response::from_string(format!("[ERROR] Another receiver has been connected on '{}'.\n", path))
+                                .with_status_code(400);
+                        request.respond(res).unwrap();
+                        continue;
+                    }
                     match path_to_sender.remove(path) {
                         // If sender is found
                         Some(sender_req) => {
@@ -54,7 +62,7 @@ fn main() {
 
                 },
                 &Method::Post | &Method::Put => {
-                    // If a sender have been registered already
+                    // If a sender has been registered already
                     if path_to_sender.contains_key(path) {
                         let res =
                             Response::from_string(format!("[ERROR] Another sender has been connected on '{}'.\n", path))
