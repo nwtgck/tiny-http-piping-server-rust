@@ -54,6 +54,14 @@ fn main() {
 
                 },
                 &Method::Post | &Method::Put => {
+                    // If a sender have been registered already
+                    if path_to_sender.contains_key(path) {
+                        let res =
+                            Response::from_string(format!("[ERROR] Another sender has been connected on '{}'.\n", path))
+                                .with_status_code(400);
+                        request.respond(res).unwrap();
+                        continue;
+                    }
                     match path_to_receiver.remove(path) {
                         // If receiver is found
                         Some(receiver_req) => {
@@ -62,7 +70,7 @@ fn main() {
                                 Ok(())
                             }));
                         },
-                        // If sender is not found
+                        // If receiver is not found
                         None => {
                             // Enroll the sender request
                             path_to_sender.insert(path.to_string(), request);
