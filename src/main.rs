@@ -1,9 +1,6 @@
 use tiny_http::{Server, Request, Response, Method, StatusCode};
 use std::collections::HashMap;
 use futures::future;
-use futures::prelude::*;
-use futures::executor::*;
-use futures::future::IntoFuture;
 
 fn transfer(mut sender_req: Request, receiver_req: Request) {
     let length = sender_req.body_length();
