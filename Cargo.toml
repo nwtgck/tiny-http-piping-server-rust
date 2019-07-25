@@ -1,5 +1,5 @@
 [package]
-name = "tiny-http-piping-server-rust"
+name = "tiny-http-piping-server"
 version = "0.1.0-SNAPSHOT"
 authors = ["Ryo Ota <nwtgck@gmail.com>"]
 edition = "2018"
