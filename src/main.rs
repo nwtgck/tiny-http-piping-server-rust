@@ -12,6 +12,7 @@ fn transfer(mut sender_req: Request, receiver_req: Request) {
         None
     );
     receiver_req.respond(response).unwrap();
+    sender_req.respond(Response::from_string("[INFO] Sent successfully!\n")).unwrap();
 }
 
 fn main() {
