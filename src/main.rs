@@ -4,7 +4,7 @@ use futures::future;
 
 use structopt::StructOpt;
 
-/// Piping Server in Rust
+/// Piping Server in Rust (tiny-http)
 #[derive(StructOpt, Debug)]
 #[structopt(name = "piping-server")]
 #[structopt(rename_all = "kebab-case")]
