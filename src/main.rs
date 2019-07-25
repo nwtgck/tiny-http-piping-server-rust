@@ -2,6 +2,18 @@ use tiny_http::{Server, Request, Response, Method, StatusCode};
 use std::collections::HashMap;
 use futures::future;
 
+use structopt::StructOpt;
+
+/// Piping Server in Rust
+#[derive(StructOpt, Debug)]
+#[structopt(name = "piping-server")]
+#[structopt(rename_all = "kebab-case")]
+struct Opt {
+    /// Image width
+    #[structopt(long, default_value = "8080")]
+    http_port: u16,
+}
+
 fn transfer(mut sender_req: Request, receiver_req: Request) {
     let length = sender_req.body_length();
     let response = Response::new(
@@ -16,8 +28,12 @@ fn transfer(mut sender_req: Request, receiver_req: Request) {
 }
 
 fn main() {
-    // TODO: Hard code: port
-    let server = Server::http("0.0.0.0:8080").unwrap();
+    // Parse options
+    let opt = Opt::from_args();
+    // Get port
+    let port = opt.http_port;
+
+    let server = Server::http( ("0.0.0.0", port)).unwrap();
     let mut path_to_sender  : HashMap<String, Request> = HashMap::new();
     let mut path_to_receiver: HashMap<String, Request> = HashMap::new();
 
