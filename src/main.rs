@@ -37,6 +37,7 @@ fn main() {
     let mut path_to_sender  : HashMap<String, Request> = HashMap::new();
     let mut path_to_receiver: HashMap<String, Request> = HashMap::new();
 
+    println!("Listening HTTP on {}...", port);
     tokio::run(future::lazy(move || {
         for request in server.incoming_requests() {
             println!("received request! method: {:?}, url: {:?}, headers: {:?}",
