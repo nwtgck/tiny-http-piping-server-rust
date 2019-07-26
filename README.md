@@ -1,5 +1,5 @@
 # tiny-http-piping-server
-[![CircleCI](https://circleci.com/gh/nwtgck/tiny-http-piping-server-rust.svg?style=shield)](https://circleci.com/gh/nwtgck/tiny-http-piping-server-rust)
+[![CircleCI](https://circleci.com/gh/nwtgck/tiny-http-piping-server-rust.svg?style=shield)](https://circleci.com/gh/nwtgck/tiny-http-piping-server-rust) [![](https://images.microbadger.com/badges/image/nwtgck/tiny-http-piping-server-rust.svg)](https://microbadger.com/images/nwtgck/tiny-http-piping-server-rust "Get your own image badge on microbadger.com")
 
 Piping Server written in Rust ([tiny-http](https://github.com/tiny-http/tiny-http))
 
