@@ -45,6 +45,6 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-        --http-port <http-port>    Image width [default: 8080]
+        --http-port <http-port>    HTTP port [default: 8080]
 
 ```

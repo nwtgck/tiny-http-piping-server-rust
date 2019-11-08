@@ -9,7 +9,7 @@ use structopt::StructOpt;
 #[structopt(name = "piping-server")]
 #[structopt(rename_all = "kebab-case")]
 struct Opt {
-    /// Image width
+    /// HTTP port
     #[structopt(long, default_value = "8080")]
     http_port: u16,
 }
