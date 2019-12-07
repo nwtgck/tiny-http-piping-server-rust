@@ -1,8 +1,10 @@
 use tiny_http::{Server, Request, Response, Method, StatusCode};
 use std::collections::HashMap;
 use futures::future;
+use futures::executor::ThreadPool;
 
 use structopt::StructOpt;
+use futures::task::SpawnExt;
 
 /// Piping Server in Rust (tiny-http)
 #[derive(StructOpt, Debug)]
@@ -36,9 +38,10 @@ fn main() {
     let server = Server::http( ("0.0.0.0", port)).unwrap();
     let mut path_to_sender  : HashMap<String, Request> = HashMap::new();
     let mut path_to_receiver: HashMap<String, Request> = HashMap::new();
+    let pool: ThreadPool = ThreadPool::new().unwrap();
 
     println!("Listening HTTP on {}...", port);
-    tokio::run(future::lazy(move || {
+    futures::executor::block_on(future::lazy(move |_| {
         for request in server.incoming_requests() {
             println!("received request! method: {:?}, url: {:?}, headers: {:?}",
                      request.method(),
@@ -66,10 +69,9 @@ fn main() {
                     match path_to_sender.remove(path) {
                         // If sender is found
                         Some(sender_req) => {
-                            tokio::spawn(future::lazy(move || {
+                            pool.spawn(future::lazy(move |_| {
                                 transfer(sender_req, request);
-                                Ok(())
-                            }));
+                            })).unwrap();
                         },
                         // If sender is not found
                         None => {
@@ -91,10 +93,9 @@ fn main() {
                     match path_to_receiver.remove(path) {
                         // If receiver is found
                         Some(receiver_req) => {
-                            tokio::spawn(future::lazy(move || {
+                            pool.spawn(future::lazy(move |_| {
                                 transfer(request, receiver_req);
-                                Ok(())
-                            }));
+                            })).unwrap();
                         },
                         // If receiver is not found
                         None => {
@@ -108,6 +109,5 @@ fn main() {
                 }
             };
         };
-        Ok(())
     }));
 }
