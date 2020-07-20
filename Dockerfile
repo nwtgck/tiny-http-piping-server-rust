@@ -22,7 +22,7 @@ WORKDIR /app
 RUN cargo build --release
 
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="Ryo Ota <nwtgck@gmail.com>"
 
 COPY --from=build /app/target/release/tiny-http-piping-server /app/target/release/tiny-http-piping-server
