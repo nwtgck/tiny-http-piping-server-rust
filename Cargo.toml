@@ -7,5 +7,5 @@ edition = "2018"
 [dependencies]
 tiny_http = "0.6"
 futures = { package="futures", version = "0.3", features = ["thread-pool"] }
-url = "2.1"
+url = "2.2"
 structopt = "0.3"
