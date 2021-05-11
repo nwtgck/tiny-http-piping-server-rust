@@ -5,7 +5,7 @@ authors = ["Ryo Ota <nwtgck@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-tiny_http = "0.6"
+tiny_http = "0.8"
 futures = { package="futures", version = "0.3", features = ["thread-pool"] }
 url = "2.1"
 structopt = "0.3"
